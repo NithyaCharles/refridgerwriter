@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refridgerwriter</title>
+	<link rel="stylesheet" href="https://use.typekit.net/usg1jhg.css">
+    <style>
+        body {
+            font-family: Constantia, "Lucida Bright", "DejaVu Serif", Georgia, "serif", sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #000000;
+        }
+
+        /* Container for header and buttons */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap; /* Allow wrapping for smaller screens */
+        }
+
+        h1 {
+            font-family: "new-spirit-condensed", serif;
+            font-weight: 400;
+            font-style: normal;
+            color: white;
+            margin: 0;
+            font-size: 2rem; /* Make the title responsive */
+        }
+
+        /* Styling for buttons */
+        #generateButton, #uploadButton {
+            font-family: "new-spirit-condensed", serif;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #000000;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 25px;
+            margin: 5px;
+        }
+
+        #wordContainer {
+            position: relative;
+            margin-top: 20px;
+            width: 100%;
+            height: 60vh; /* Responsive height */
+            border-radius: 25px;
+            background-image: url("containerbg.png");
+            display: none; /* Initially hidden */
+        }
+
+        .word, .image {
+            position: absolute;
+            cursor: grab;
+            border-bottom: 4px solid #1d1d1d;
+            border-left: 2px solid #1d1d1d;
+            border-top: 0.5px solid #1d1d1d;
+            border-right: 1px solid #1d1d1d;
+            box-shadow: 0px 2px 3px #a8a8a8;
+        }
+
+        .word:active, .image:active {
+            cursor: grabbing;
+        }
+
+        .image {
+            max-width: 250px;
+            max-height: 250px;
+        }
+
+        .word {
+            font-size: 1.5rem; /* Adjust font size for responsiveness */
+            color: #1d1d1d;
+            padding: 5px 10px;
+            background-color: #f4f4ec;
+        }
+
+        title {
+            color: white;
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem; /* Smaller font size for mobile */
+                text-align: center; /* Center title on small screens */
+                margin-bottom: 15px;
+            }
+
+            #generateButton, #uploadButton {
+                font-size: 1rem; /* Smaller buttons on mobile */
+                padding: 8px;
+                width: 100%; /* Make buttons full width */
+                margin-top: 10px;
+            }
+
+            #wordContainer {
+                height: 50vh; /* Adjust container height for smaller screens */
+            }
+
+            .word {
+                font-size: 1.2rem; /* Smaller font size for words on mobile */
+            }
+
+            .image {
+                max-width: 200px; /* Smaller images on mobile */
+                max-height: 200px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            #generateButton, #uploadButton {
+                font-size: 0.9rem; /* Further reduce button size on small screens */
+                padding: 6px;
+            }
+
+            .word {
+                font-size: 1rem; /* Even smaller font size for words */
+            }
+
+            .image {
+                max-width: 150px; /* Reduce max width of images even more */
+                max-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <h1>Refridgerwriter</h1>
+        <div>
+            <button id="generateButton">Generate Words</button>
+            <input type="file" id="uploadButton" accept="image/*" multiple>
+        </div>
+    </div>
+    
+    <div id="wordContainer"></div>
+
+    <script>
+        const words = [
+            "the", "a", "an", "I", "you", "we", "he", "she", "they", "it", "me", "us", "him", "her", "my", "your", "our", "his", "her", "their", "who", "what", "where", "when", "how", "that", "this", "each", "some", "any", "few", "all", "many", "more", "less", "quite", "so", "really", "very", "gently", "softly", "gracefully", "slowly", "tenderly", "peacefully", "tranquil", "still", "serene", "quietly", "now", "then", "always", "never", "sometimes", "rarely", "often", "forever", "eternal", "timeless", "bliss", "radiance", "sparkle", "glow", "shine", "luster", "bright", "shimmer", "light", "dawn", "twilight", "dusk", "sunrise", "sunset", "moonlight", "starry", "dream", "peace", "harmony", "love", "joy", "delight", "reverie", "wonder", "fantasy", "song", "melody", "rhythm", "symphony", "breeze", "cloud", "wind", "sea", "ocean", "river", "lake", "stream", "mountain", "meadow", "forest", "grove", "petal", "blossom", "rose", "lily", "orchid", "tulip", "garden", "vine", "leaf", "tree", "branch", "dew", "mist", "rain", "snow", "frost", "ice", "moon", "sun", "star", "sky", "horizon", "path", "journey", "adventure", "whisper", "murmur", "echo", "songbird", "nightingale", "dove", "swan", "butterfly", "firefly", "snowflake", "blossom", "wisp", "glow", "radiant", "luminous", "ethereal", "heavenly", "celestial", "seraphic", "divine", "enchanting", "graceful", "gentle", "soft", "pure", "eternal", "majestic", "regal", "tranquil", "sublime", "delicate", "vibrant", "tender", "peaceful", "calm", "quiet", "soothe", "restful", "gentle", "tranquility", "sweet", "angelic", "glorious", "splendid", "gorgeous", "beautiful", "serene", "idyllic", "splendid", "exquisite", "magnificent", "flourish", "bloom", "euphoria", "calmness", "harmony", "melody", "radiance", "timeless", "endless", "mystical", "delightful", "tapestry", "lullaby", "candlelight", "velvet", "silk", "satin", "charmed", "unfold", "lush", "softness", "adore", "cherish", "embrace"
+        ];
+
+        const generateButton = document.getElementById('generateButton');
+        const uploadButton = document.getElementById('uploadButton');
+        const wordContainer = document.getElementById('wordContainer');
+
+        let selectedElement = null;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        // Handle word generation
+        function generateWords() {
+            wordContainer.innerHTML = ''; // Clear previous words
+            wordContainer.style.display = 'block'; // Make container visible
+
+            // Shuffle the words array and pick the first 30 words
+            const shuffledWords = words.sort(() => Math.random() - 0.5).slice(0, 30);
+
+            shuffledWords.forEach(word => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'word';
+                wordDiv.textContent = word;
+                wordDiv.style.left = `${Math.random() * (wordContainer.offsetWidth - 100)}px`;
+                wordDiv.style.top = `${Math.random() * (wordContainer.offsetHeight - 30)}px`;
+
+                // Add event listeners for dragging
+                wordDiv.addEventListener('mousedown', (e) => {
+                    selectedElement = wordDiv;
+                    const rect = wordDiv.getBoundingClientRect();
+                    offsetX = e.clientX - rect.left; // Calculate the offset relative to the word
+                    offsetY = e.clientY - rect.top;
+                });
+
+                wordContainer.appendChild(wordDiv);
+            });
+        }
+
+        // Handle image upload
+        uploadButton.addEventListener('change', (e) => {
+            const files = e.target.files;
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = document.createElement('img');
+                    img.className = 'image';
+                    img.src = event.target.result;
+                    img.style.left = `${Math.random() * (wordContainer.offsetWidth - 100)}px`;
+                    img.style.top = `${Math.random() * (wordContainer.offsetHeight - 100)}px`;
+
+                    // Add event listeners for dragging images
+                    img.addEventListener('mousedown', (e) => {
+                        selectedElement = img;
+                        const rect = img.getBoundingClientRect();
+                        offsetX = e.clientX - rect.left;
+                        offsetY = e.clientY - rect.top;
+                    });
+
+                    wordContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // Mouse move event to drag words or images
+        document.addEventListener('mousemove', (e) => {
+            if (selectedElement) {
+                selectedElement.style.left = `${e.clientX - offsetX}px`;
+                selectedElement.style.top = `${e.clientY - offsetY}px`;
+            }
+        });
+
+        // Mouse up event to release the word or image
+        document.addEventListener('mouseup', () => {
+            selectedElement = null;
+        });
+
+        generateButton.addEventListener('click', generateWords);
+    </script>
+</body>
+</html>

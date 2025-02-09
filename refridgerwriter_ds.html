@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refridgerwriter</title>
+    <link rel="stylesheet" href="https://use.typekit.net/usg1jhg.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	
+    <div class="header-container">
+        <h1>Refridgerwriter</h1>
+        <div>
+            <button id="generateButton">Generate Words</button>
+        </div>
+    </div>
+   <div class="fridge">
+    <div id="wordContainer" class="fridgebg">
+    <script>
+        const words = [
+            "the", "a", "an", "I", "you", "we", "he", "she", "they", "it", "me", "us", "him", "her", "my", "your", "our", "his", "her", "their", "who", "what", "where", "when", "how", "that", "this", "each", "some", "any", "few", "all", "many", "more", "less", "quite", "so", "really", "very", "gently", "softly", "gracefully", "slowly", "tenderly", "peacefully", "tranquil", "still", "serene", "quietly", "now", "then", "always", "never", "sometimes", "rarely", "often", "forever", "eternal", "timeless", "bliss", "radiance", "sparkle", "glow", "shine", "luster", "bright", "shimmer", "light", "dawn", "twilight", "dusk", "sunrise", "sunset", "moonlight", "starry", "dream", "peace", "harmony", "love", "joy", "delight", "reverie", "wonder", "fantasy", "song", "melody", "rhythm", "symphony", "breeze", "cloud", "wind", "sea", "ocean", "river", "lake", "stream", "mountain", "meadow", "forest", "grove", "petal", "blossom", "rose", "lily", "orchid", "tulip", "garden", "vine", "leaf", "tree", "branch", "dew", "mist", "rain", "snow", "frost", "ice", "moon", "sun", "star", "sky", "horizon", "path", "journey", "adventure", "whisper", "murmur", "echo", "songbird", "nightingale", "dove", "swan", "butterfly", "firefly", "snowflake", "blossom", "wisp", "glow", "radiant", "luminous", "ethereal", "heavenly", "celestial", "seraphic", "divine", "enchanting", "graceful", "gentle", "soft", "pure", "eternal", "majestic", "regal", "tranquil", "sublime", "delicate", "vibrant", "tender", "peaceful", "calm", "quiet", "soothe", "restful", "gentle", "tranquility", "sweet", "angelic", "glorious", "splendid", "gorgeous", "beautiful", "serene", "idyllic", "splendid", "exquisite", "magnificent", "flourish", "bloom", "euphoria", "calmness", "harmony", "melody", "radiance", "timeless", "endless", "mystical", "delightful", "tapestry", "lullaby", "candlelight", "velvet", "silk", "satin", "charmed", "unfold", "lush", "softness", "adore", "cherish", "embrace"
+        ];
+        const generateButton = document.getElementById('generateButton');
+        const wordContainer = document.getElementById('wordContainer');
+
+        let selectedElement = null;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        // Handle word generation
+        function generateWords() {
+            console.log("Generate Words button clicked!"); // Debugging line
+            wordContainer.innerHTML = ''; // Clear previous words
+            wordContainer.style.display = 'block'; // Make container visible
+
+            // Shuffle the words array and pick the first 30 words
+            const shuffledWords = words.sort(() => Math.random() - 0.5).slice(0, 30);
+
+            shuffledWords.forEach(word => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'word';
+                wordDiv.textContent = word;
+
+                // Calculate random positions within the container's bounds
+                const maxX = wordContainer.clientWidth - 100; // Subtract word width to keep it within bounds
+                const maxY = wordContainer.clientHeight - 30; // Subtract word height to keep it within bounds
+
+                console.log("Max X:", maxX, "Max Y:", maxY); // Debugging line
+
+                wordDiv.style.left = `${Math.random() * maxX}px`;
+                wordDiv.style.top = `${Math.random() * maxY}px`;
+
+                // Add event listeners for dragging
+                wordDiv.addEventListener('mousedown', (e) => {
+                    selectedElement = wordDiv;
+                    const rect = wordDiv.getBoundingClientRect();
+                    offsetX = e.clientX - rect.left; // Calculate the offset relative to the word
+                    offsetY = e.clientY - rect.top;
+                });
+
+                wordContainer.appendChild(wordDiv);
+            });
+        }
+
+        // Attach event listener to the button
+        if (generateButton) {
+            generateButton.addEventListener('click', generateWords);
+        } else {
+            console.error("Generate button not found!"); // Debugging line
+        }
+
+        // Mouse move event to drag words or images
+        document.addEventListener('mousemove', (e) => {
+            if (selectedElement) {
+                selectedElement.style.left = `${e.clientX - offsetX}px`;
+                selectedElement.style.top = `${e.clientY - offsetY}px`;
+            }
+        });
+
+        // Mouse up event to release the word or image
+        document.addEventListener('mouseup', () => {
+            selectedElement = null;
+        });
+    </script>
+		</div>
+		</div>
+</body>
+</html>
